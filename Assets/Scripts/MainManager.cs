@@ -3,16 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 public class MainManager : MonoBehaviour
 {
+
     public Brick BrickPrefab;
     public int LineCount = 6;
     public Rigidbody Ball;
 
     public Text ScoreText;
     public GameObject GameOverText;
-    
+    public Text TopScoreText;
+
     private bool m_Started = false;
     private int m_Points;
     
@@ -36,6 +39,7 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
+        TopScoreText.text = "Best score: " + ScoreAndDataManager.Instance.TopScoreName + ": " + ScoreAndDataManager.Instance.TopScore;
     }
 
     private void Update()
@@ -66,11 +70,22 @@ public class MainManager : MonoBehaviour
     {
         m_Points += point;
         ScoreText.text = $"Score : {m_Points}";
+        if (m_Points > ScoreAndDataManager.Instance.TopScore)
+        {
+            TopScoreText.text = "New top score !!!";
+
+        }
     }
 
     public void GameOver()
     {
         m_GameOver = true;
+        ScoreAndDataManager.Instance.pushTopScore(m_Points);
         GameOverText.SetActive(true);
+    }
+
+    public void MainMenu()
+    {
+        SceneManager.LoadScene(1);
     }
 }
